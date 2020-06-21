@@ -10,8 +10,14 @@ use App\User;
 class FirstController extends Controller
 {
     function index(Request $request) {
-        var_dump($request->all());
-        return UserResource::collection(User::paginate(20));
+        $params = $request->all();
+        $query = User::query();
+        foreach ($params as $key => $param) {
+            if($key != "pagination" && $key != "page"){
+                $query = $query->where($key, $param);
+            }
+        }
+        $result = $query->paginate($request->pagination);
+        return UserResource::collection($result);
     }
-
 }
